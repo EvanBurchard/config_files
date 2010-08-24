@@ -1,4 +1,9 @@
 # ADD LOCAL CONFIGURATION HERE
+[color]
+	ui = true
+[user]
+	name = evanburchard
+	email = evan.burchard@gmail.com
 
 
 # DO NOT EDIT BELOW THIS LINE

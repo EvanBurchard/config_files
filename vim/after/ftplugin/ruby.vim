@@ -14,47 +14,17 @@ function! SpecDescribed()
 endfunction
 
 function! SpecSubject()
-  return rails#underscore(SpecDescribed())
+  return "@" . rails#underscore(SpecDescribed())
 endfunction
 
-function! InSpecBlock()
-  let curcol = col(".")
-  if curcol > 1
-    return 1
-  else
-    return 0
-  endif
-endfunction
-
-function! DefaultSpecDescribe()
-  if InSpecBlock()
-    return "describe"
-  else
-    return "describe Object,"
-  endif
-endfunction
-
-function! IterVar()
-  let line = getline('.')
-  let col = col('.')
-  let collection = line[0 : col]
-  " remove .each or .collect
-  let collection = substitute(collection,"\\.[^.]*$","","")
-  " remove leading space
-  let collection = substitute(collection,"^\\s\\+","","")
-  " remove chains like post.users
-  let collection = substitute(collection,"^.*\\.","","")
-  " remove instance variable punctuatoin
-  let collection = substitute(collection,"^@","","")
-  " singularize
+function! IterVar(collection)
+  let collection = substitute(a:collection,"^@","","")
   return rails#singularize(collection)
 endfunction
 
 " general ruby snippets
-Snippet each each do |``IterVar()``|<CR><{}><CR>end
-Snippet map map do |``IterVar()``|<CR><{}><CR>end
-Snippet eachl each { |``IterVar()``| <{}> }
-Snippet mapl map { |``IterVar()``| <{}> }
+Snippet each <{collection}>.each do |<{collection:IterVar(@z)}>|<CR><{}><CR>end
+Snippet collect <{collection}>.collect {|<{member}>| <{}> }
 
 " active record associations
 Snippet bt belongs_to :<{}>
@@ -108,10 +78,9 @@ Snippet cont context "<{description}>" do<CR>setup do<CR><{}><CR>end<CR>end
 Snippet sh should "<{description}>" do<CR><{}><CR>end
 
 "rspec
-Snippet desc ``DefaultSpecDescribe()`` "<{description}>" do<CR><{}><CR>end
-Snippet descn describe <{class}> do<CR><{}><CR>end
-Snippet bef before do<CR>{}<CR>end
-Snippet let let(:<{actor}>) { <{}> }
+Snippet desc describe <{class}>, "<{description}>" do<CR>before do<CR><{}><CR>end<CR>end
+Snippet descn describe <{class}> do<CR>before do<CR><{}><CR>end<CR>end
+Snippet descs describe "<{description}>" do<CR>before do<CR><{}><CR>end<CR>end
 Snippet it it "should <{description}>" do<CR><{}><CR>end
 Snippet itsh it "should <{description}>" do<CR>``SpecSubject()``.should <{}><CR>end
 Snippet itshbe it "should <{description}>" do<CR>``SpecSubject()``.should be_<{}><CR>end
@@ -141,8 +110,6 @@ Snippet asn assert_nil <{}>
 Snippet asnn assert_not_nil <{}>
 Snippet asm assert_match <{expected}>, <{}>
 Snippet asnm assert_match <{unexpected}>, <{}>
-Snippet assel assert_select "<{}>"
-Snippet asre assert_received(<{subject}>, :<{method}>) { |expect| expect.<{}> }
 
 " render
 Snippet renda render :action => '<{}>'
@@ -155,13 +122,3 @@ Snippet rendl render :layout => '<{}>'
 Snippet Given Given /^<{step}>$/ do<{}><CR>end
 Snippet When When /^<{step}>$/ do<{}><CR>end
 Snippet Then Then /^<{step}>$/ do<{}><CR>end
-
-" Search shortcuts
-nmap m/ /^\s*\(def \\| def self\.\)
-
-" Start a new method in a Ruby class
-" <Leader>nm
-nmap <Leader>nm gg/^\s\+\(private\\|protected\)\\|^end<Enter>kO<Enter>
-
-" Align Ruby operators like hash rockets
-vmap <buffer> <C-A> !align_ruby<CR>

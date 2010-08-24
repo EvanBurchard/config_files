@@ -1,0 +1,135 @@
+--- 
+git: "Setup\n\
+  -----\n\n\
+  git clone <repo>\n  clone the repository specified by <repo>; this is similar to \"checkout\" in\n  some other version control systems such as Subversion and CVS\n\n\
+  Add colors to your ~/.gitconfig file:\n\n  [color]\n    ui = auto\n  [color \"branch\"]\n    current = yellow reverse\n    local = yellow\n    remote = green\n  [color \"diff\"]\n    meta = yellow bold\n    frag = magenta bold\n    old = red bold\n    new = green bold\n  [color \"status\"]\n    added = yellow\n    changed = green\n    untracked = cyan\n\n\
+  Highlight whitespace in diffs\n\n  [color]\n    ui = true\n  [color \"diff\"]\n    whitespace = red reverse\n  [core]\n    whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol\n\n\
+  Add aliases to your ~/.gitconfig file:\n\n  [alias]\n    st = status\n    ci = commit\n    br = branch\n    co = checkout\n    df = diff\n    lg = log -p\n\n\n\
+  Configuration\n\
+  -------------\n\n\
+  git config -e [--global]\n  edit the .git/config [or ~/.gitconfig] file in your $EDITOR\n\n\
+  git config --global user.name 'John Doe'\n\
+  git config --global user.email johndoe@example.com\n  sets your name and email for commit messages\n\n\
+  git config branch.autosetupmerge true\n  tells git-branch and git-checkout to setup new branches so that git-pull(1)\n  will appropriately merge from that remote branch.  Recommended.  Without this,\n  you will have to add --track to your branch command or manually merge remote\n  tracking branches with \"fetch\" and then \"merge\".\n\n\
+  git config core.autocrlf true\n  This setting tells git to convert the newlines to the system\xE2\x80\x99s standard\n  when checking out files, and to LF newlines when committing in\n\n\
+  You can add \"--global\" after \"git config\" to any of these commands to make it\n\
+  apply to all git repos (writes to ~/.gitconfig).\n\n\n\
+  Info\n\
+  ----\n\
+  git reflog \n  Use this to recover from *major* fuck ups! It's basically a log of the\n  last few actions and you might have luck and find old commits that\n  have been lost by doing a complex merge.\n\n\
+  git diff\n  show a diff of the changes made since your last commit\n  to diff one file: \"git diff -- <filename>\"\n  to show a diff between staging area and HEAD: `git diff --cached`\n\n\
+  git status\n  show files added to the staging area, files with changes, and untracked files\n\n\
+  git log\n  show recent commits, most recent on top. Useful options:\n  --color       with color\n  --graph       with an ASCII-art commit graph on the left\n  --decorate    with branch and tag names on appropriate commits\n  --stat        with stats (files changed, insertions, and deletions)\n  -p            with full diffs\n  --author=foo  only by a certain author\n  --after=\"MMM DD YYYY\" ex. (\"Jun 20 2008\") only commits after a certain date\n  --before=\"MMM DD YYYY\" only commits that occur before a certain date\n  --merge       only the commits involved in the current merge conflicts\n\n\
+  git log <ref>..<ref>\n  show commits between the specified range. Useful for seeing changes from remotes:\n  git log HEAD..origin/master # after git remote update\n\n\
+  git show <rev>\n  show the changeset (diff) of a commit specified by <rev>, which can be any\n  SHA1 commit ID, branch name, or tag (shows the last commit (HEAD) by default)\n\n\
+  git show --name-only <rev>\n  show only the names of the files that changed, no diff information.\n\n\
+  git blame <file>\n  show who authored each line in <file>\n\n\
+  git blame <file> <rev>\n  show who authored each line in <file> as of <rev> (allows blame to go back in\n  time)\n\n\
+  git gui blame\n  really nice GUI interface to git blame\n\n\
+  git whatchanged <file>\n  show only the commits which affected <file> listing the most recent first\n\n\n\
+  Adding / Deleting\n\
+  -----------------\n\n\
+  git add <file1> <file2> ...\n  add <file1>, <file2>, etc... to the project\n\n\
+  git add <dir>\n  add all files under directory <dir> to the project, including subdirectories\n\n\
+  git add .\n  add all files under the current directory to the project\n  *WARNING*: including untracked files.\n\n\
+  git rm <file1> <file2> ...\n  remove <file1>, <file2>, etc... from the project\n\n\
+  git rm $(git ls-files --deleted)\n  remove all deleted files from the project\n\n\
+  git rm --cached <file1> <file2> ...\n  commits absence of <file1>, <file2>, etc... from the project\n\n\n\
+  Staging\n\
+  -------\n\n\
+  git add <file1> <file2> ...\n\
+  git stage <file1> <file2> ...\n  add changes in <file1>, <file2> ... to the staging area (to be included in\n  the next commit\n\n\
+  git add -p\n\
+  git stage --patch\n  interactively walk through the current changes (hunks) in the working\n  tree, and decide which changes to add to the staging area.\n\n\
+  git add -i\n\
+  git stage --interactive\n  interactively add files/changes to the staging area. For a simpler\n  mode (no menu), try `git add --patch` (above)\n\n\n\
+  Committing\n\
+  ----------\n\n\
+  git commit <file1> <file2> ... [-m <msg>]\n  commit <file1>, <file2>, etc..., optionally using commit message <msg>,\n  otherwise opening your editor to let you type a commit message\n\n\
+  git commit -a\n  commit all files changed since your last commit\n  (does not include new (untracked) files)\n\n\
+  git commit -v\n  commit verbosely, i.e. includes the diff of the contents being committed in\n  the commit message screen\n\n\
+  git commit --amend\n  edit the commit message of the most recent commit\n\n\
+  git commit --amend <file1> <file2> ...\n  redo previous commit, including changes made to <file1>, <file2>, etc...\n\n\n\
+  Branching\n\
+  ---------\n\n\
+  git branch\n  list all local branches\n\n\
+  git branch -r\n  list all remote branches\n\n\
+  git branch -a\n  list all local and remote branches\n\n\
+  git branch <branch>\n  create a new branch named <branch>, referencing the same point in history as\n  the current branch\n\n\
+  git branch <branch> <start-point>\n  create a new branch named <branch>, referencing <start-point>, which may be\n  specified any way you like, including using a branch name or a tag name\n\n\
+  git branch --track <branch> <remote-branch>\n  create a tracking branch. Will push/pull changes to/from another repository.\n  Example: git branch --track experimental origin/experimental\n\n\
+  git branch -d <branch>\n  delete the branch <branch>; if the branch you are deleting points to a commit\n  which is not reachable from the current branch, this command will fail with a\n  warning.\n\n\
+  git branch -r -d <remote-branch>\n  delete a remote-tracking branch.\n  Example: git branch -r -d wycats/master\n\n\
+  git branch -D <branch>\n  even if the branch points to a commit not reachable from the current branch,\n  you may know that that commit is still reachable from some other branch or\n  tag. In that case it is safe to use this command to force git to delete the\n  branch.\n\n\
+  git checkout <branch>\n  make the current branch <branch>, updating the working directory to reflect\n  the version referenced by <branch>\n\n\
+  git checkout -b <new> <start-point>\n  create a new branch <new> referencing <start-point>, and check it out.\n\n\
+  git push <repository> :<branch>\n  removes a branch from a remote repository.\n  Example: git push origin :old_branch_to_be_deleted\n\n\n\
+  Merging\n\
+  -------\n\n\
+  git merge <branch>\n  merge branch <branch> into the current branch; this command is idempotent and\n  can be run as many times as needed to keep the current branch up-to-date with\n  changes in <branch>\n\n\
+  git merge <branch> --no-commit\n  merge branch <branch> into the current branch, but do not autocommit the\n  result; allows you to make further tweaks\n\n\
+  git merge <branch> -s ours\n  merge branch <branch> into the current branch, but drops any changes in\n  <branch>, using the current tree as the new tree\n\n\n\
+  Cherry-Picking\n\
+  --------------\n\n\
+  git cherry-pick [--edit] [-n] [-m parent-number] [-s] [-x] <commit>\n  selectively merge a single commit from another local branch\n  Example: git cherry-pick 7300a6130d9447e18a931e898b64eefedea19544\n\n\n\
+  Squashing\n\
+  ---------\n\
+  WARNING: \"git rebase\" changes history. Be careful. Google it.\n\n\
+  git rebase --interactive HEAD~10\n  (then change all but the first \"pick\" to \"squash\")\n  squash the last 10 commits into one big commit\n\n\n\
+  Conflicts\n\
+  ---------\n\n\
+  git mergetool\n  work through conflicted files by opening them in your mergetool (opendiff,\n  kdiff3, etc.) and choosing left/right chunks. The merged result is staged for\n  commit.\n\n\
+  For binary files or if mergetool won't do, resolve the conflict(s) manually and\n\
+  then do:\n\n  git add <file1> [<file2> ...]\n\n\
+  Once all conflicts are resolved and staged, commit the pending merge with:\n\n  git commit\n\n\n\
+  Sharing\n\
+  -------\n\n\
+  git fetch <remote>\n  update the remote-tracking branches for <remote> (defaults to \"origin\").\n  Does not initiate a merge into the current branch (see \"git pull\" below).\n\n\
+  git pull\n  fetch changes from the server, and merge them into the current branch.\n  Note: .git/config must have a [branch \"some_name\"] section for the current\n  branch, to know which remote-tracking branch to merge into the current\n  branch.  Git 1.5.3 and above adds this automatically.\n\n\
+  git push\n  update the server with your commits across all branches that are *COMMON*\n  between your local copy and the server.  Local branches that were never pushed\n  to the server in the first place are not shared.\n\n\
+  git push origin <branch>\n  update the server with your commits made to <branch> since your last push.\n  This is always *required* for new branches that you wish to share.  After the\n  first explicit push, \"git push\" by itself is sufficient.\n\n\n\
+  Reverting\n\
+  ---------\n\n\
+  git revert <rev>\n  reverse commit specified by <rev> and commit the result.  This does *not* do\n  the same thing as similarly named commands in other VCS's such as \"svn revert\"\n  or \"bzr revert\", see below\n\n\
+  git checkout <file>\n  re-checkout <file>, overwriting any local changes\n\n\
+  git checkout .\n  re-checkout all files, overwriting any local changes.  This is most similar to\n  \"svn revert\" if you're used to Subversion commands\n\n\n\
+  Fix mistakes / Undo\n\
+  -------------------\n\n\
+  git reset --hard\n  abandon everything since your last commit; this command can be DANGEROUS.  If\n  merging has resulted in conflicts and you'd like to just forget about the\n  merge, this command will do that.\n\n\
+  git reset --hard ORIG_HEAD\n  undo your most recent *successful* merge *and* any changes that occurred\n  after.  Useful for forgetting about the merge you just did.  If there are\n  conflicts (the merge was not successful), use \"git reset --hard\" (above)\n  instead.\n\n\
+  git reset --soft HEAD^\n  forgot something in your last commit? That's easy to fix. Undo your last\n  commit, but keep the changes in the staging area for editing.\n\n\
+  git commit --amend\n  redo previous commit, including changes you've staged in the meantime.\n  Also used to edit commit message of previous commit.\n\n\n\
+  Plumbing\n\
+  --------\n\n\
+  test <sha1-A> = $(git merge-base <sha1-A> <sha1-B>)\n  determine if merging sha1-B into sha1-A is achievable as a fast forward;\n  non-zero exit status is false.\n\n\n\
+  Stashing\n\
+  --------\n\n\
+  git stash save <optional-name>\n  save your local modifications to a new stash (so you can for example\n  \"git svn rebase\" or \"git pull\")\n\n\
+  git stash apply\n  restore the changes recorded in the stash on top of the current working tree\n  state\n\n\
+  git stash pop\n  restore the changes from the most recent stash, and remove it from the stack\n  of stashed changes\n\n\
+  git stash list\n  list all current stashes\n\n\
+  git stash show <stash-name> -p\n  show the contents of a stash - accepts all diff args\n\n\
+  git stash clear\n  delete current stashes\n\n\n\
+  Remotes\n\
+  -------\n\n\
+  git remote add <remote> <remote_URL>\n  adds a remote repository to your git config.  Can be then fetched locally.\n  Example:\n    git remote add coreteam git://github.com/wycats/merb-plugins.git\n    git fetch coreteam\n\n\
+  git push <remote> :refs/heads/<branch>\n  delete a branch in a remote repository\n\n\
+  git push <remote> <remote>:refs/heads/<remote_branch>\n  create a branch on a remote repository\n  Example: git push origin origin:refs/heads/new_feature_name\n\n\
+  git push <repository> +<remote>:<new_remote>\n  create a branch on a remote repository based on +<remote>\n  Example: git push origin +master:my_branch\n\n\
+  git remote prune <remote>\n  prune deleted remote-tracking branches from \"git branch -r\" listing\n\n\
+  git remote add -t master -m master origin git://example.com/git.git/\n  add a remote and track its master\n\n\n\
+  Submodules\n\
+  ----------\n\n\
+  git submodule add <remote_repository> <path/to/submodule>\n  add the given repository at the given path. The addition will be part of the\n  next commit.\n\n\
+  git submodule update [--init]\n  Update the registered submodules (clone missing submodules, and checkout\n  the commit specified by the super-repo). --init is needed the first time.\n\n\
+  git submodule foreach <command>\n  Executes the given command within each checked out submodule.\n\n\
+  Remove submodules\n\n   1. Delete the relevant line from the .gitmodules file.\n   2. Delete the relevant section from .git/config.\n   3. Run git rm --cached path_to_submodule (no trailing slash).\n   4. Commit and delete the now untracked submodule files. \n\n\n\
+  Git Instaweb\n\
+  ------------\n\n\
+  git instaweb --httpd=webrick [--start | --stop | --restart]\n\n\n\
+  Environment Variables\n\
+  ---------------------\n\n\
+  GIT_AUTHOR_NAME, GIT_COMMITTER_NAME\n  Your full name to be recorded in any newly created commits.  Overrides\n  user.name in .git/config\n\n\
+  GIT_AUTHOR_EMAIL, GIT_COMMITTER_EMAIL\n  Your email address to be recorded in any newly created commits.  Overrides\n  user.email in .git/config\n\n\
+  GIT_DIR\n  Location of the repository to use (for out of working directory repositories)\n\n\
+  GIT_WORKING_TREE\n  Location of the Working Directory - use with GIT_DIR to specifiy the working directory root\n  or to work without being in the working directory at all."

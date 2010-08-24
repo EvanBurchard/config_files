@@ -1,0 +1,3 @@
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+alias mysql-start="sudo /usr/local/mysql/support-files/mysql.server start"
+alias mysql-stop="sudo /usr/local/mysql/support-files/mysql.server stop"
