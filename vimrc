@@ -1,4 +1,5 @@
-" Use Vim settings, rather then Vi settings (much better!).
+runtime repos/vimtlib/macros/tplugin.vim
+
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
@@ -23,7 +24,7 @@ map Q gq
 " Also switch on highlighting the last used search pattern.
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
-  set nohlsearch
+  set hlsearch
 endif
 
 " Only do this part when compiled with support for autocommands.
@@ -58,13 +59,16 @@ else
 
 endif " has("autocmd")
 
-" if has("folding")
-  " set foldenable
-  " set foldmethod=syntax
-  " set foldlevel=1
-  " set foldnestmax=2
-  " set foldtext=strpart(getline(v:foldstart),0,50).'\ ...\ '.substitute(getline(v:foldend),'^[\ #]*','','g').'\ '
-" endif
+if has("folding")
+  set foldenable
+  set foldmethod=syntax
+  set foldlevel=1
+  set foldnestmax=2
+  set foldtext=strpart(getline(v:foldstart),0,50).'\ ...\ '.substitute(getline(v:foldend),'^[\ #]*','','g').'\ '
+
+  " automatically open folds at the starting cursor position
+  " autocmd BufReadPost .foldo!
+endif
 
 " Softtabs, 2 spaces
 set tabstop=2
@@ -75,7 +79,23 @@ set expandtab
 set laststatus=2
 
 " \ is the leader character
-let mapleader = "\\"
+let mapleader = ","
+
+map <leader>ss :call ToggleScratch()<CR>
+
+map <Leader>, :FuzzyFinderTextMate<CR>
+
+map <Leader>gs :!git status<CR>
+map <Leader>gc :!git commit -m ""<LEFT>
+map <Leader>gac :!git commit -m -a ""<LEFT>
+map <Leader>ga :!git add .<CR>
+map <Leader>cc :!rake cucumber<CR>
+map <Leader>rc :!rails console<CR>
+map <Leader>rs :!rails server<CR>
+map <Leader>sp :!rake spec<CR>
+
+map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+map <leader>tree :execute 'NERDTree'<CR>
 
 " Edit the README_FOR_APP (makes :R commands work)
 map <Leader>R :e doc/README_FOR_APP<CR>
@@ -86,8 +106,6 @@ map <Leader>c :Rcontroller
 map <Leader>v :Rview 
 map <Leader>u :Runittest 
 map <Leader>f :Rfunctionaltest 
-map <Leader>i :Rintegrationtest 
-map <Leader>h :Rhelper 
 map <Leader>tm :RTmodel 
 map <Leader>tc :RTcontroller 
 map <Leader>tv :RTview 
@@ -98,10 +116,9 @@ map <Leader>sc :RScontroller
 map <Leader>sv :RSview 
 map <Leader>su :RSunittest 
 map <Leader>sf :RSfunctionaltest 
-map <Leader>si :RSintegrationtest 
 
 " Hide search highlighting
-map <Leader>l :set invhls <CR>
+map <Leader>h :set invhls <CR>
 
 " Opens an edit command with the path of the currently edited file filled in
 " Normal mode: <Leader>e
@@ -116,7 +133,7 @@ map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 
 " Maps autocomplete to tab
-imap <Tab> <C-P>
+imap <Tab> <C-N>
 
 " Duplicate a selection
 " Visual mode: D
@@ -130,10 +147,6 @@ nmap <F1> <Esc>
 
 " Press ^F from insert mode to insert the current file name
 imap <C-F> <C-R>=expand("%")<CR>
-
-" Press Shift+P while in visual mode to replace the selection without
-" overwriting the default register
-vmap P p :call setreg('"', getreg('0')) <CR>
 
 " Display extra whitespace
 set list listchars=tab:»·,trail:·
@@ -164,13 +177,25 @@ set numberwidth=5
 " Snippets are activated by Shift+Tab
 let g:snippetsEmu_key = "<S-Tab>"
 
+" EasyGrep Recursive
+let g:EasyGrepRecursive=1
+
 " Tab completion options
+" (only complete to the longest unambiguous match, and show a menu)
+set completeopt=longest,menu
 set wildmode=list:longest,list:full
 set complete=.,t
 
-" Tags
-let g:Tlist_Ctags_Cmd="ctags --exclude='*.js'"
+" case only matters with mixed case expressions
+set ignorecase
+set smartcase
+vmap <Leader>b :<C-U>!svn blame <C-R>=expand("%:p") <CR> \| sed -n <C-R>=line("'<") <CR>,<C-R>=line("'>") <CR>p <CR> 
+vmap <Leader>g :<C-U>!git blame <C-R>=expand("%:p") <CR> \| sed -n <C-R>=line("'<") <CR>,<C-R>=line("'>") <CR>p <CR> 
+vmap <Leader>h :<C-U>!hg blame -fu <C-R>=expand("%:p") <CR> \| sed -n <C-R>=line("'<") <CR>,<C-R>=line("'>") <CR>p <CR>
 
-" Window navigation
-nmap <C-J> <C-W><C-J>
-nmap <C-K> <C-W><C-K>
+" Map jj to <esc>
+imap jj <Esc>
+" Save if focus is lost
+autocmd FocusLost * :wall
+:filetype plugin on
+
